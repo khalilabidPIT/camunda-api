@@ -1,7 +1,16 @@
 const { C8 } = require("camunda-8-sdk");
 
-const zbc = new C8.ZBClient();
-const operate = new C8.OperateApiClient();
+// Initialize clients with required configurations
+const zbc = new C8.ZBClient({
+  oAuth: {
+    cacheDir: process.env.ZEEBE_OAUTH_CACHE_DIR || '/tmp', // Ensure OAuth tokens are cached in a writable directory
+  },
+});
+const operate = new C8.OperateApiClient({
+  oAuth: {
+    cacheDir: process.env.ZEEBE_OAUTH_CACHE_DIR || '/tmp',
+  },
+});
 
 exports.getProcessDefinitions = async (req, res) => {
   try {
