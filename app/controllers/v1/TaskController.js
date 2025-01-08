@@ -1,6 +1,11 @@
 const { C8, Tasklist } = require("camunda-8-sdk");
 
-const tasklistAPI = new C8.TasklistApiClient();
+const cacheDir = process.env.ZEEBE_OAUTH_CACHE_DIR || "/tmp";
+const tasklistAPI = new C8.TasklistApiClient({
+  oAuth: {
+    cacheDir, // Explicitly set the cache directory
+  },
+});
 
 ////////////////////////////////////
 // Load All Tasks
