@@ -1,0 +1,122 @@
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Install Dependencies
+          caches:
+            - node
+          script:
+            - npm install --production
+            - tar -zcf node_modules.tar.gz node_modules/
+          artifacts:
+            - "node_modules.tar.gz"
+      - step:
+          deployment: test
+          name: Deploy to Integration server
+          script:
+            - pipe: atlassian/rsync-deploy:0.8.1
+              variables:
+                EXTRA_ARGS: "-azv  --exclude-from=./ignorelist.txt --omit-dir-times"
+                USER: $USER
+                SERVER: $SERVER
+                REMOTE_PATH: "/var/opt/storage/"
+                LOCAL_PATH: "./"
+            - pipe: atlassian/ssh-run:0.4.1
+              variables:
+                SSH_USER: $USER
+                SERVER: $SERVER
+                COMMAND: "cd /var/opt/storage && sudo tar -zxf node_modules.tar.gz && sudo rm node_modules.tar.gz && cp /var/opt/storage/.env.int /var/opt/storage/.env && sudo systemctl restart storage && sudo systemctl status storage"
+                DEBUG: "true"
+                MODE: "command"
+
+                # Pipeline success email
+            - pipe: atlassian/email-notify:0.8.0
+              variables:
+                USERNAME: $EMAIL_ADDRESS
+                PASSWORD: $EMAIL_PASSWORD
+                FROM: $EMAIL_ADDRESS
+                TO: "khalil.abid@piterion.com"
+                HOST: "mail.privateemail.com"
+                PORT: "587"
+                BODY_PLAIN: Success !! Deployment successful of storage application on $BITBUCKET_DEPLOYMENT_ENVIRONMENT environment with pipeline <a href='https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}'>build#${BITBUCKET_BUILD_NUMBER}</a>.
+                DEBUG: "true"
+    staging:
+      - step:
+          name: Install Dependencies
+          caches:
+            - node
+          script:
+            - npm install --production
+            - tar -zcf node_modules.tar.gz node_modules/
+          artifacts:
+            - "node_modules.tar.gz"
+      - step:
+          deployment: staging
+          name: Deploy to Staging
+          script:
+            - pipe: atlassian/rsync-deploy:0.8.1
+              variables:
+                EXTRA_ARGS: "-azv  --exclude-from=./ignorelist.txt --omit-dir-times"
+                USER: $USER
+                SERVER: $SERVER
+                REMOTE_PATH: "/var/opt/storage/"
+                LOCAL_PATH: "./"
+            - pipe: atlassian/ssh-run:0.4.1
+              variables:
+                SSH_USER: $USER
+                SERVER: $SERVER
+                COMMAND: "cd /var/opt/storage && sudo tar -zxf node_modules.tar.gz && sudo rm node_modules.tar.gz && cp /var/opt/storage/.env.stage /var/opt/storage/.env && sudo systemctl restart storage && sudo systemctl status storage"
+                DEBUG: "true"
+                MODE: "command"
+
+                # Pipeline success email
+            - pipe: atlassian/email-notify:0.8.0
+              variables:
+                USERNAME: $EMAIL_ADDRESS
+                PASSWORD: $EMAIL_PASSWORD
+                FROM: $EMAIL_ADDRESS
+                TO: "khalil.abid@piterion.com"
+                HOST: "mail.privateemail.com"
+                PORT: "587"
+                BODY_PLAIN: Success !! Deployment successful of storage application on $BITBUCKET_DEPLOYMENT_ENVIRONMENT environment with pipeline <a href='https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}'>build#${BITBUCKET_BUILD_NUMBER}</a>.
+                DEBUG: "true"
+    master:
+      - step:
+          name: Install Dependencies
+          caches:
+            - node
+          script:
+            - npm install --production
+            - tar -zcf node_modules.tar.gz node_modules/
+          artifacts:
+            - "node_modules.tar.gz"
+      - step:
+          deployment: production
+          name: Deploy to Production
+          script:
+            - pipe: atlassian/rsync-deploy:0.8.1
+              variables:
+                EXTRA_ARGS: "-azv  --exclude-from=./ignorelist.txt --omit-dir-times"
+                USER: $USER
+                SERVER: $SERVER
+                REMOTE_PATH: "/var/opt/storage/"
+                LOCAL_PATH: "./"
+            - pipe: atlassian/ssh-run:0.4.1
+              variables:
+                SSH_USER: $USER
+                SERVER: $SERVER
+                COMMAND: "cd /var/opt/storage && sudo tar -zxf node_modules.tar.gz && sudo rm node_modules.tar.gz && cp /var/opt/storage/.env.prod /var/opt/storage/.env && sudo systemctl restart storage && sudo systemctl status storage"
+                DEBUG: "true"
+                MODE: "command"
+
+                # Pipeline success email
+            - pipe: atlassian/email-notify:0.8.0
+              variables:
+                USERNAME: $EMAIL_ADDRESS
+                PASSWORD: $EMAIL_PASSWORD
+                FROM: $EMAIL_ADDRESS
+                TO: "khalil.abid@piterion.com"
+                HOST: "mail.privateemail.com"
+                PORT: "587"
+                BODY_PLAIN: Success !! Deployment successful of storage application on $BITBUCKET_DEPLOYMENT_ENVIRONMENT environment with pipeline <a href='https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}'>build#${BITBUCKET_BUILD_NUMBER}</a>.
+                DEBUG: "true"

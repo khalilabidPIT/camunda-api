@@ -1,0 +1,17 @@
+version: "3.8"
+
+networks:
+  proxiable:
+
+services:
+  app:
+    build: .
+    command: npm run dev
+    container_name: tasklist-service
+    working_dir: /var/www
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+      #- /var/www/node_modules
+    networks:
+      - proxiable
