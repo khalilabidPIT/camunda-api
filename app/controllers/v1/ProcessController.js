@@ -21,10 +21,10 @@ exports.getProcessDefinitions = async (req, res) => {
 
     // Step 2: Group process definitions by their key
     const processDefinitionsMap = allProcessDefinitions?.items
-      ?.filter(
-        (item) =>
-          item?.bpmnProcessId === "P024_copy" || item?.bpmnProcessId === "P025"
-      )
+      //?.filter(
+      //  (item) =>
+      //    item?.bpmnProcessId === "P024" || item?.bpmnProcessId === "P025"
+      //)
       ?.reduce((acc, definition) => {
         const key = definition.bpmnProcessId;
         if (!acc[key] || acc[key].version < definition.version) {
