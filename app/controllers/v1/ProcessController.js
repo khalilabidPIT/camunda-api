@@ -23,7 +23,7 @@ exports.getProcessDefinitions = async (req, res) => {
     const processDefinitionsMap = allProcessDefinitions?.items
       ?.filter(
         (item) =>
-          item?.bpmnProcessId === "P024" || item?.bpmnProcessId === "P025"
+          item?.bpmnProcessId === "P024_copy" || item?.bpmnProcessId === "P025"
       )
       ?.reduce((acc, definition) => {
         const key = definition.bpmnProcessId;
