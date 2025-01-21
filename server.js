@@ -27,6 +27,7 @@ app.use(helmet());
 const TasklistRoutes = require("./app/routes/TasklistRoutes");
 const TaskRoutes = require("./app/routes/TaskRoutes");
 const ProcessRoutes = require("./app/routes/ProcessRoutes");
+const TaskHistoryRoutes = require("./app/routes/TaskHistoryRoutes");
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -48,7 +49,7 @@ app.use("/api/v1.0/task/getTask", TaskRoutes);
 app.use("/api/v1.0/task/getVariable", TaskRoutes);
 app.use("/api/v1.0/task/getVariables", TaskRoutes);
 app.use("/api/v1.0/task/deleteProcessInstance", TaskRoutes);
-
+app.use("/api/v1.0/tasks/history", TaskHistoryRoutes);
 app.use("/api/v1.0/tasklist/:processDefinitionId/:taskId", TasklistRoutes);
 
 app.use("/api/v1.0/process", ProcessRoutes);
